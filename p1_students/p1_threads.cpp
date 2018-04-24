@@ -30,9 +30,12 @@ void *runnable(void *param)
 
 void split(std::vector<student> *D, int iBegin, int iEnd, std::vector<student> *C)
 {
+	if(iEnd - iBegin < 2)
+		return;
 	int iMiddle = (iBegin + iEnd)/2;
 	split(C, iBegin, iMiddle, D);
 	split(C, iMiddle, iEnd, D);
+	Merge(D, iBegin, iMiddle, iEnd, C);
 
 }
 
