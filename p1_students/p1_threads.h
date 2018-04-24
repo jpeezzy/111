@@ -8,7 +8,9 @@
 #include <pthread.h>
 
 #include "p1_process.h"
+#include "student.h"
 
+void *runnable(void *param);//creates thread
 
-
+std::vector<student>* mergeSortThread(int begin, int end, std::vector<student> studs);
 #endif

@@ -1,0 +1,60 @@
+#include <vector>
+#include "p1_process.h"
+#include <fstream>
+
+void get_statistics(std::string class_name[], int num_processes, int num_threads) {
+	printf("creating a maximum of %d processes\n", num_processes);
+	for(int i = 0; i < num_processes; i++)
+	{
+		if(fork() == 0)
+		{
+			printf("Hello from child!\n");
+			//printf("creating a maximum of %d threads\n", num_threads);
+			//creating a vector of PIDs
+			pthread_t tid[num_threads];
+			pthread_attr_t attr[num_threads];
+			//accessing the file based off class name;
+			std::string tempVar = "input/" + class_name[i] + ".csv";
+			std::ifstream inFile;
+			inFile.open(tempVar);
+			if(!inFile)
+			{
+				perror("Cannot find file!");
+				exit(0);
+			}
+			
+			for(int j = 0; j < num_threads; j++)
+			{
+				pthread_attr_init(&attr[i]);
+				pthread_create(&tid[i],&attr[i], runnable, &i);
+			}
+			for(int k = 0; k < num_threads; k++)
+			{
+				printf("Thread %lu deleted \n", tid[i]);
+				pthread_join(tid[i], NULL);
+			}
+			exit(EXIT_SUCCESS);
+		}
+		else
+		{
+			printf("Hello from parent !\n");
+		}
+	}
+
+	//wait for all child processes
+	//if any process has no child process, then wait = -1
+	//wait will constantly check for forks ending. if one fork 
+	//terminates, wait wil lreturn the pid of that fork.
+	while((wait(0))>0) {}
+	return;
+	// You need to create multiple processes here (each process
+	// handles at least one file.)
+	
+	
+	// Each process should use the sort function which you have defined  		
+	// in the p1_threads.cpp for multithread sorting of the data. 
+	
+	// Your code should be able to get the statistics and generate
+	// the required outputs for any number of child processes and threads.
+	
+}

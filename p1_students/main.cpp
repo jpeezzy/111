@@ -23,7 +23,8 @@ int main(int argc, char** argv)
 		num_processes = atoi(argv[1]);
 		num_threads = atoi(argv[2]);
 		// Call the process
-		get_statistics(class_name, num_processes, num_threads);
+		int num_class = sizeof(class_name)/sizeof(*class_name);
+		get_statistics(class_name, num_processes, num_threads, num_class);
 	}
 	else
 	{
