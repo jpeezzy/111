@@ -12,11 +12,11 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 	{
 		if(fork() == 0)
 		{
-			int filenumber = filesLeft;
 			bool endChild = 0;
+			//printf("Hello from child!\n");
 			while(endChild == 0)
 			{
-				printf("Hello from child!\n");
+				int filenumber = filesLeft;
 				//printf("creating a maximum of %d threads\n", num_threads);
 				//creating a vector of PIDs
 				//accessing the file based off class name;
@@ -41,17 +41,17 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 				{
 					pthread_attr_init(&attr[j]);
 					targs.threadNum = j;
-					pthread_create(&tid[j],&attr[filesLeft], runnable, (void*)&targs);
+					pthread_create(&tid[j],&attr[j], runnable, (void*)&targs);
 				}
 				for(int k = 0; k < num_threads; k++)
 				{
 					pthread_join(tid[k], NULL);
 					printf("Thread %lu deleted \n", tid[k]);
 				}
-				writeToFile(students, class_name[filesLeft]);
+				writeToFile(students, class_name[filenumber]);
 				filesLeft--;
 				//write the "sorted vector" to file
-				if(filesLeft <= 0)
+				if(filesLeft < 0)
 				{
 					break;
 					endChild=1;

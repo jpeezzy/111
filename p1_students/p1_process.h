@@ -20,7 +20,6 @@ struct thread_args
 	int num_threads;
 	int threadNum;
 	int sizeofVector;
-	int remainder;
 	std::vector<student> *sV;
 };
 

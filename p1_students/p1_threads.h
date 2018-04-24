@@ -13,4 +13,8 @@
 void *runnable(void *param);//creates thread
 
 std::vector<student>* mergeSortThread(int begin, int end, std::vector<student> studs);
+
+void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<student> *D);
+
+void split(std::vector<student> *D, int iBegin, int iEnd, std::vector<student> *C);
 #endif
