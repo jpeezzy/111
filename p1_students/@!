@@ -8,26 +8,31 @@
 static int *filesLeft;
 void get_statistics(std::string class_name[], int num_processes, int num_threads, int num_files) 
 {
-	filesLeft = (int*)mmap(NULL, sizeof *filesLeft, PROT_READ | PROT_WRITE, 
+	filesLeft = mmap(NULL, sizeof *glob_var, PROT_READ | PROT_WRITE, 
 			                    MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 	printf("creating a maximum of %d processes\n", num_processes);
-	*filesLeft = num_files;
+	int filesLeft = num_files - 1;
 
 	for(int i = 0; i < num_processes; i++)
 	{
 		if(fork() == 0)
 		{
-			--*filesLeft;
 			bool endChild = 0;
 			//printf("Hello from child!\n");
 			while(endChild == 0)
 			{
-				int filenumber = *filesLeft;
+				int filenumber = filesLeft;
 				//printf("creating a maximum of %d threads\n", num_threads);
+				//creating a vector of PIDs
+				//accessing the file based off class name;
+				//stores the students in a vector
 				std::vector<student> students = getStudents(class_name[filenumber]);
 				std::cout.precision(12);
 				int sizeofVector = students.size()/num_threads;
 
+				//parameters in the runnable thread function 
+				//holds the number of threads, the index, how big vector is, 
+				//and how much is left from dividing evenly
 				pthread_t tid[num_threads];
 				pthread_attr_t attr[num_threads];
 				struct thread_args targs;
@@ -54,8 +59,7 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 				double med = median(students);
 				writeStatistics(students, class_name[filenumber], m, med, stdDev);
 				//write the "sorted vector" to file
-				--*filesLeft;
-				if(*filesLeft < 0)
+				if(filesLeft < 0)
 				{
 					break;
 					endChild=1;
@@ -65,12 +69,12 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 		}
 		else
 		{
-			//printf("Creating child thread %d \n", *filesLeft);
+			--filesLeft;
+			printf("Hello from parent !\n");
 		}
 	}
 	//wait for all child processes
 	while((wait(0))>0) {}
-	munmap(filesLeft, sizeof *filesLeft);
 	return;
 }
 
