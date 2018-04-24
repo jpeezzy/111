@@ -22,7 +22,7 @@ void *runnable(void *param)
 	struct thread_args *threadArgs = (struct thread_args *)param;
 	//std::cout << "sizeof vector is " << threadArgs->sizeofVector << std::endl;
 	int begin = threadArgs->threadNum * threadArgs->sizeofVector;
-	int end = (threadArgs->threadNum+1) * threadArgs->sizeofVector-1;
+	int end = (threadArgs->threadNum+1) * threadArgs->sizeofVector;
 	mergeSortThread(begin, end, threadArgs->sV);
 	//printf("")
 	return NULL;
@@ -36,7 +36,6 @@ void split(std::vector<student> *D, int iBegin, int iEnd, std::vector<student> *
 	split(C, iBegin, iMiddle, D);
 	split(C, iMiddle, iEnd, D);
 	Merge(D, iBegin, iMiddle, iEnd, C);
-
 }
 
 void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<student> *D)

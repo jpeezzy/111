@@ -2,6 +2,7 @@
 #include "p1_process.h"
 #include <iomanip>      // std::setprecision
 #include <sstream> //string stream
+#include <math.h>
 
 void get_statistics(std::string class_name[], int num_processes, int num_threads, int num_files) 
 {
@@ -50,6 +51,10 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 				}
 				writeToFile(students, class_name[filenumber]);
 				filesLeft--;
+				double m = mean(students);
+				double stdDev = standardDeiviation(students);
+				double med = median(students);
+				writeStatistics(students, class_name[filenumber], m, med, stdDev);
 				//write the "sorted vector" to file
 				if(filesLeft < 0)
 				{
@@ -118,7 +123,50 @@ void writeToFile(std::vector<student> stud, std::string class_name)
 	std::vector<student>::reverse_iterator it;
 	for(i = 1, it = stud.rbegin(); it != stud.rend(); i++, it++)
 	{
-		ofFile << i << "," << it->getId() << "," << it->getScore() << "\n";
+		ofFile << i << "," << it->getId() << "," << std::setprecision(12) << it->getScore() << "\n";
 	}
+	ofFile.close();
+	return;
+}
+
+
+double mean(std::vector<student> students)
+{
+	std::vector<student>::iterator it;
+	double score;
+	for(it = students.begin(); it != students.end(); it++)
+	{
+		score += it->getScore();	
+	}
+	return score/students.size();
+}
+
+double standardDeiviation(std::vector<student> students)
+{
+	double m = mean(students);
+	std::vector<student>::iterator it;
+	double score = 0;
+	for(it = students.begin(); it != students.end(); it++)
+	{
+		score += pow(it->getScore() - m ,2);
+	}
+
+	return pow(score/students.size(), 0.5);
+}
+double median(std::vector<student> students)
+{
+	return students.at(students.size()/2).getScore();
+}
+
+void writeStatistics(std::vector<student> stud, std::string class_name, double mean, double median, double standardDeviation)
+{
+	std::ofstream ofFile;
+	std::string dir = "output/" + class_name + "_statistics.csv";
+
+	ofFile.open(dir.c_str(), std::ofstream::out | std::ofstream::trunc);
+
+	ofFile << "mean,median,standardDeiviation" << std::endl;
+	ofFile << mean << "," << median << "," << standardDeiviation << std::endl;
+	ofFile.close();
 	return;
 }

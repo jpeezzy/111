@@ -27,9 +27,10 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 
 std::vector<student> getStudents(std::string class_name);
 
-double mean(std::vector<student> students, int begin, int end);
-double standardDeiviation(std::vector<student> students, int begin, int end);
-double median(std::vector<student> students, int begin, int end);
+double mean(std::vector<student> students);
+double standardDeiviation(std::vector<student> students);
+double median(std::vector<student> students);
 
 void writeToFile(std::vector<student> stud, std::string class_name);
+void writeStatistics(std::vector<student> stud, std::string class_name, double mean, double median, double standardDeviation);
 #endif
