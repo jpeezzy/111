@@ -18,5 +18,5 @@ void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<
 
 void split(std::vector<student> *D, int iBegin, int iEnd, std::vector<student> *C);
 
-void  Merge2(std::vector<student> *A,  std::vector<student> *B, std::vector<student> *result);
+void Merge2(std::vector<student> *C, int begin, int middle, int end, std::vector<student> *D);
 #endif

@@ -5,10 +5,10 @@ CFLAGS=-std=c++98 -I.
 
 
 %.o: %.cpp
-	$(CC) -g -Wall -c $< $(CFLAGS)
+	$(CC) -c $< $(CFLAGS)
 
 ${EXEC}: main.o p1_process.o p1_threads.o student.o
-	g++ -g -o ${EXEC} main.o p1_process.o p1_threads.o student.o -I. -lpthread 
+	g++ -o ${EXEC} main.o p1_process.o p1_threads.o student.o -I. -lpthread 
 
 
 clean:

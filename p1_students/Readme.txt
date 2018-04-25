@@ -1,0 +1,1 @@
+Copy paste the content of this folder to your source code folder and run autograder.py with python3. Make sure you have pandas installed.
