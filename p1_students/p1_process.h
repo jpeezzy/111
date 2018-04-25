@@ -21,6 +21,7 @@ struct thread_args
 	int threadNum;
 	int sizeofVector;
 	std::vector<student> *sV;
+	std::vector<std::vector<student> > *sortedThreads;
 };
 
 void get_statistics(std::string class_name[], int num_processes, int num_threads, int num_files);

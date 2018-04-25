@@ -9,7 +9,7 @@ static int *filesLeft;
 void get_statistics(std::string class_name[], int num_processes, int num_threads, int num_files) 
 {
 	filesLeft = (int*)mmap(NULL, sizeof *filesLeft, PROT_READ | PROT_WRITE, 
-			                    MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+			MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 	printf("creating a maximum of %d processes\n", num_processes);
 	*filesLeft = num_files;
 
@@ -27,28 +27,39 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 				std::vector<student> students = getStudents(class_name[filenumber]);
 				std::cout.precision(12);
 				int sizeofVector = students.size()/num_threads;
-
+				std::vector<std::vector<student> > studVects;
 				pthread_t tid[num_threads];
 				pthread_attr_t attr[num_threads];
-				struct thread_args targs;
-				targs.num_threads = num_threads;
-				targs.threadNum = 0;
-				targs.sizeofVector = sizeofVector;
-				targs.sV = &students;
 				//split up the vector based off how many threads we have
+				struct thread_args targs[num_threads];
 
 				for(int j = 0; j < num_threads; j++)
 				{
+					targs[j].num_threads = num_threads;
+					targs[j].sizeofVector = sizeofVector;
+					targs[j].sortedThreads = &studVects;
+					targs[j].sV = &students;
+					targs[j].threadNum = j;
 					pthread_attr_init(&attr[j]);
-					targs.threadNum = j;
-					pthread_create(&tid[j],&attr[j], runnable, (void*)&targs);
+					pthread_create(&tid[j],&attr[j], runnable, (void*)&targs[j]);
 				}
+
 				for(int k = 0; k < num_threads; k++)
 				{
 					pthread_join(tid[k], NULL);
 					printf("Thread %lu deleted \n", tid[k]);
 				}
-				writeToFile(students, class_name[filenumber]);
+				std::cout <<"all threads joined!" <<std::endl;
+				//Merge the threads 
+				if(num_threads > 1)
+				{
+					for(int x = 1; x <num_threads;x++)
+					{				
+						Merge2(&studVects.at(0), &studVects.at(x));
+					}
+				}
+				std::cout<<"finished merging all threads !"<<std::endl;
+				writeToFile(studVects.at(0), class_name[filenumber]);
 				double m = mean(students);
 				double stdDev = standardDeiviation(students);
 				double med = median(students);
@@ -153,6 +164,7 @@ double standardDeiviation(std::vector<student> students)
 
 	return pow(score/students.size(), 0.5);
 }
+
 double median(std::vector<student> students)
 {
 	return students.at(students.size()/2).getScore();

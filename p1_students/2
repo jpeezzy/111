@@ -21,19 +21,13 @@ void *runnable(void *param)
 	int begin = threadArgs->threadNum * threadArgs->sizeofVector;
 	int end = (threadArgs->threadNum+1) * threadArgs->sizeofVector;
 	//std::cout << "STARTED MERGE " << std::endl;
-	//std::cout <<"begin is " << begin << "end is " << end << std::endl;
-	//std::cout <<"vector size is " << threadArgs->sV->size()<<std::endl;
-	std::cout <<"thread num is " <<threadArgs->threadNum << std::endl;
-	std::vector<student> temp;
-	for(int i = begin; i < end; i++)
-	{
-		temp.push_back(threadArgs->sV->at(i));
-	}
-	//std::vector<student>temp(first,last);
-	//threadArgs->sortedThreads->push_back(std::vector<student>());
+	//printf("threading this\n");
+	std::vector<student>::const_iterator first = threadArgs->sV->begin() + begin;
+	std::vector<student>::const_iterator last = threadArgs->sV->begin()+end;
+
+	std::vector<student>temp(first,last);
+	threadArgs->sortedThreads->push_back(std::vector<student>());
 	mergeSortThread(begin, end, &temp);
-	printf("threading this\n");
-	threadArgs->sortedThreads->push_back(temp);
 	return NULL;
 }	//creates thread
 
