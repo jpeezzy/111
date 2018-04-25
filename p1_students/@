@@ -5,9 +5,8 @@
 // or directly call this function
 std::vector<student>* mergeSortThread(int begin, int end, std::vector<student>* studs)
 {
-	assert(studs);
 	std::vector<student> b;
-	b.reserve(1000000);
+	b.reserve(1000);
 	std::vector<student>::iterator it;
 	for(it = studs->begin(); it != studs->end(); it++)
 	{
@@ -19,7 +18,6 @@ std::vector<student>* mergeSortThread(int begin, int end, std::vector<student>* 
 
 void *runnable(void *param)
 {
-	assert(param);
 	struct thread_args *threadArgs = (struct thread_args *)param;
 	int begin = threadArgs->threadNum * threadArgs->sizeofVector;
 	int end = (threadArgs->threadNum+1) * threadArgs->sizeofVector;
@@ -28,33 +26,21 @@ void *runnable(void *param)
 	//std::cout <<"vector size is " << threadArgs->sV->size()<<std::endl;
 //	std::cout <<"thread num is " <<threadArgs->threadNum << std::endl;
 	std::vector<student> temp;
-	temp.reserve(1000000);
+	temp.reserve(1000);
 	for(int i = begin; i < end; i++)
 	{
 		temp.push_back(threadArgs->sV->at(i));
 	}
 	//std::vector<student>temp(first,last);
+	//threadArgs->sortedThreads->push_back(std::vector<student>());
 	mergeSortThread(0, end-begin, &temp);
 //	printf("threading this\n");
-	int thread_end = threadArgs->sortedThreads->size()-1;
-	if(thread_end < 0)
-	{
-		threadArgs->sortedThreads->push_back(temp);
-		thread_end=0;
-	}
-	else
-	{
-		threadArgs->sortedThreads->push_back(temp);
-	}
-	thread_end = threadArgs->sortedThreads->size()-1;
-	std::cout <<"the returned thing is " << threadArgs->sortedThreads->at(thread_end).size()<<std::endl;
-
+	threadArgs->sortedThreads->push_back(temp);
 	return NULL;
 }	//creates thread
 
 void split(std::vector<student> *D, int iBegin, int iEnd, std::vector<student> *C)
 {
-	assert(C);
 	if(iEnd - iBegin < 2)
 		return;
 	int iMiddle = (iBegin + iEnd)/2;
@@ -65,8 +51,6 @@ void split(std::vector<student> *D, int iBegin, int iEnd, std::vector<student> *
 
 void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<student> *D)
 {
-	assert(C);
-	assert(D);
 	int i = begin;
 	int j = middle;
 	for(int k = begin; k < end; k++)
@@ -88,15 +72,10 @@ void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<
 void Merge2(std::vector<student> *A,  std::vector<student> *B, std::vector<student>* result)
 {
 
-	unsigned int A_count = 0;
-	unsigned int B_count = 0;
+	int A_count = 0;
+	int B_count = 0;
 	std::vector<student>::iterator itA = A->begin();
 	std::vector<student>::iterator itB = B->begin();
-	/*
-	if(A->size() != B->size())
-	{
-		return;
-	}*/
 	//result->clear();
 	if(A->empty() || B->empty())
 	{
@@ -108,15 +87,17 @@ void Merge2(std::vector<student> *A,  std::vector<student> *B, std::vector<stude
 
 	while(true)
 	{
-		if(A->at(A_count).getScore() >= B->at(B_count).getScore())
+		if(A->at(A_count).score >= B->at(B_count).score)
 		{
 			result->push_back(A->at(A_count));
 			A_count++;
+			itA++;
 		}
 		else
 		{
 			result->push_back(B->at(B_count));
 			B_count++;
+			itB++;
 		}
 		if(A_count >= (A->size()-1) || (B_count >= B->size()-1))
 		{

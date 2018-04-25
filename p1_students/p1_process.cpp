@@ -15,12 +15,13 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 
 	for(int i = 0; i < num_processes; i++)
 	{
-		if(fork() == 0)
+		if(fork())
 		{
 			bool endChild = 0;
 			//printf("Hello from child!\n");
 			while(endChild == 0)
 			{
+				//std::cout << "File num is " <<std::endl;
 				int filenumber = --*filesLeft;
 				if(*filesLeft < 0)
 				{
@@ -28,47 +29,63 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 					endChild=1;
 				}
 				//printf("creating a maximum of %d threads\n", num_threads);
+
 				std::vector<student> students = getStudents(class_name[filenumber]);
-				std::cout.precision(12);
+
 				int sizeofVector = students.size()/num_threads;
 				std::vector<std::vector<student> > studVects;
+				studVects.reserve(100);
 				pthread_t tid[num_threads];
 				pthread_attr_t attr[num_threads];
 				//split up the vector based off how many threads we have
-				struct thread_args targs[num_threads];
 
 				for(int j = 0; j < num_threads; j++)
 				{
-					targs[j].num_threads = num_threads;
-					targs[j].sizeofVector = sizeofVector;
-					targs[j].sortedThreads = &studVects;
-					targs[j].sV = &students;
-					targs[j].threadNum = j;
+					struct thread_args targs;
+					targs.num_threads = num_threads;
+					targs.sizeofVector = sizeofVector;
+					targs.sortedThreads = &studVects;
+					targs.sV = &students;
+					targs.threadNum = j;
 					pthread_attr_init(&attr[j]);
-					pthread_create(&tid[j],&attr[j], runnable, (void*)&targs[j]);
+					pthread_create(&tid[j],&attr[j], runnable, (void*)&targs);
 				}
 
 				for(int k = 0; k < num_threads; k++)
 				{
 					pthread_join(tid[k], NULL);
-					printf("Thread %lu deleted \n", tid[k]);
+					//printf("Thread %lu deleted \n", tid[k]);
 				}
+
 				std::cout <<"all threads joined!" <<std::endl;
 				//Merge the threads 
+				std::vector<student> final_result;
+				final_result.reserve(1000000);
 				if(num_threads > 1)
 				{
-					std::cout <<"starting to merge all threads" << std::endl;
-					for(int x = 1; x <num_threads;x++)
-					{				
-						Merge2(&studVects.at(0), &studVects.at(x));
-					}
+					//std::cout<<"the size of studVects is " << studVects.size()<<std::endl;
+					Merge2(&studVects[0], &studVects[1], &final_result);
+					std::cout<<"finished merging all threads !"<<std::endl;
+					//std::cout <<"starting to merge all threads" << std::endl;
+					/*for(int x = 2; x <num_threads;x++)
+					  {
+					//std::cout<<"finished merging all threads !"<<std::endl;
+					//std::vector<student> temp = final_result; 
+					//Merge2(&temp, &studVects.at(x), final_result);
+					}*/
+					//std::cout<<"finished merging all threads !"<<std::endl;
+					//final_result = studVects.at(0);
 				}
-				std::cout<<"finished merging all threads !"<<std::endl;
-				writeToFile(studVects.at(0), class_name[filenumber]);
-				double m = mean(students);
-				double stdDev = standardDeiviation(students);
-				double med = median(students);
-				writeStatistics(students, class_name[filenumber], m, med, stdDev);
+				else
+				{
+					final_result = studVects.at(0);
+				}
+					writeToFile(final_result, class_name[filenumber]);
+					double m = mean(final_result);
+					double stdDev = standardDeiviation(final_result);
+					double med = median(final_result);
+					writeStatistics(final_result, class_name[filenumber], m, med, stdDev);
+					std::cout<<"finished merging all threads !"<<std::endl;
 				//write the "sorted vector" to file
 			}
 			exit(EXIT_SUCCESS);
