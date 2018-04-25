@@ -17,12 +17,16 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 	{
 		if(fork() == 0)
 		{
-			--*filesLeft;
 			bool endChild = 0;
 			//printf("Hello from child!\n");
 			while(endChild == 0)
 			{
-				int filenumber = *filesLeft;
+				int filenumber = --*filesLeft;
+				if(*filesLeft < 0)
+				{
+					break;
+					endChild=1;
+				}
 				//printf("creating a maximum of %d threads\n", num_threads);
 				std::vector<student> students = getStudents(class_name[filenumber]);
 				std::cout.precision(12);
@@ -53,6 +57,7 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 				//Merge the threads 
 				if(num_threads > 1)
 				{
+					std::cout <<"starting to merge all threads" << std::endl;
 					for(int x = 1; x <num_threads;x++)
 					{				
 						Merge2(&studVects.at(0), &studVects.at(x));
@@ -65,12 +70,6 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 				double med = median(students);
 				writeStatistics(students, class_name[filenumber], m, med, stdDev);
 				//write the "sorted vector" to file
-				--*filesLeft;
-				if(*filesLeft < 0)
-				{
-					break;
-					endChild=1;
-				}
 			}
 			exit(EXIT_SUCCESS);
 		}

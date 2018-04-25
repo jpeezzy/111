@@ -31,7 +31,7 @@ void *runnable(void *param)
 	}
 	//std::vector<student>temp(first,last);
 	//threadArgs->sortedThreads->push_back(std::vector<student>());
-	mergeSortThread(begin, end, &temp);
+	mergeSortThread(0, end-begin, &temp);
 	printf("threading this\n");
 	threadArgs->sortedThreads->push_back(temp);
 	return NULL;
@@ -70,30 +70,36 @@ void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<
 void Merge2(std::vector<student> *A,  std::vector<student> *B)
 {
 	std::vector<student> *result = new std::vector<student>();
-	while (!A->empty() | !B->empty())
+	//std::cout << " SIZE OF A is " << A->size() << "Size of b is " << B->size() << std::endl;;
+	int A_count = 0;
+	int B_count = 0;
+	while (A_count < A->size() && B_count < B->size())
 	{
-		if(A->front().getScore() > B->front().getScore())
+		if(A->at(A_count).getScore() > B->at(B_count).getScore())
 		{
-			result->push_back(A->front());
-			A->erase(A->begin());
+			result->push_back(A->at(A_count));
+			A_count++;
 		}
 		else
 		{
-			result->push_back(B->front());
-			B->erase(B->begin());
+			result->push_back(B->at(B_count));
+			B_count++;
 		}
+		//std::cout << " SIZE OF A is " << A->size() << "Size of b is " << B->size() << std::endl;;
 	}
-
-	while(!A->empty())
+	//std::cout <<" FINISHED first part for merge " << std::endl;
+	while(A_count < A->size())
 	{
-		result->push_back(A->front());
-		A->erase(A->begin());
+		result->push_back(A->at(A_count));
+		A_count++;
 	}
-	while(!B->empty())
+	//std::cout <<" FINISHED second part for merge " << std::endl;
+	while(B_count < B->size())
 	{
-		result->push_back(B->front());
-		B->erase(B->begin());
+		result->push_back(B->at(B_count));
+		B_count++;
 	}
+	//std::cout <<" FINISHED third part for merge " << std::endl;
 	A = result;
 	return;
 }
