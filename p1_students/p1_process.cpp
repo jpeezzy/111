@@ -69,11 +69,13 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 					//std::cout<<"the size of students is " << students.size() << std::endl;
 					for(int i = 0; i < num_threads; i++)
 					{
+						//end = (i+1)*students.size()/num_threads;
+						//middle = (begin+end)/2;
 						end = (i+1)*students.size()/num_threads;
-						middle = (begin+end)/2;
 						//std::cout << "begin is " << begin << "end is " << end << "middle is " << middle << std::endl;
-
 						Merge(&students, begin, middle, end, &final_result);
+						students = final_result;
+						middle = end;
 					}
 				}
 				else
@@ -106,7 +108,6 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 			std::cout <<"Child Process is terminated. (pid: " << child_id[child_count] << " )" << std::endl;
 			child_count--;
 		}
-
 	}
 	munmap(filesLeft, sizeof *filesLeft);
 	return;
@@ -132,7 +133,7 @@ std::vector<student> getStudents(std::string class_name)
 	while(std::getline(inFile, tempScoreLine))
 	{
 		std::string::size_type comma = tempScoreLine.find(",");
-		std::string tStudent = tempScoreLine.substr(0, comma-1);
+		std::string tStudent = tempScoreLine.substr(0, comma);
 		std::string tScore = tempScoreLine.substr(comma+1, tempScoreLine.size());
 		//std::cout <<"tstudent here is " << tStudent << std::endl;
 		std::setprecision(12);
@@ -141,7 +142,7 @@ std::vector<student> getStudents(std::string class_name)
 		ss >> ID;
 		std::stringstream sScore(tScore);
 		double Score;
-		sScore >> std::setprecision(12) >> Score;
+		sScore >> std::setprecision(15) >> Score;
 		studentScores.push_back (student(ID, Score));
 		//std::cout <<tScore << std::endl;
 	}
@@ -161,7 +162,7 @@ void writeToFile(std::vector<student> stud, std::string class_name)
 	std::vector<student>::reverse_iterator it;
 	for(i = 1, it = stud.rbegin(); it != stud.rend(); i++, it++)
 	{
-		ofFile <<  std::fixed<<  i << "," << it->getId() << "," <<std::setprecision(10) << it->getScore() << "\n";
+		ofFile <<  i << "," << std::setprecision(11) << it->getId() << "," <<std::setprecision(14) << it->getScore() << "\n";
 	}
 	ofFile.close();
 	return;

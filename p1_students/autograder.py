@@ -28,7 +28,7 @@ while True:
     
 print('Your code has been compiled')
 
-make_process = subprocess.Popen("./p1_exec 5 2",shell=True, stdout=subprocess.PIPE, stderr=sys.stdout.fileno())
+make_process = subprocess.Popen("./p1_exec 5 4",shell=True, stdout=subprocess.PIPE, stderr=sys.stdout.fileno())
 while True:
     line = make_process.stdout.readline()
     if not line:break
