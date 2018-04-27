@@ -53,7 +53,7 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 					{
 						if(students.size()%num_threads  != 0)
 						{
-							std::cout <<"changes the end to " << std::endl;
+							//std::cout <<"sizeofvctor is " << sizeofVector << std::endl;
 							targs[j].end = students.size();
 						}
 					}
@@ -77,6 +77,7 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 					int end = students.size()/num_threads;
 					int middle = (begin+end)/2;
 					//std::cout<<"the size of students is " << students.size() << std::endl;
+					//writeToFile(final_result, class_name[filenumber]+"tests");
 					for(int i = 0; i < num_threads; i++)
 					{
 						//middle = (begin+end)/2;
@@ -84,16 +85,11 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 						//std::cout << "begin is " << begin << "end is " << end << "middle is " << middle << std::endl;
 						if((i == (num_threads-1)) && (students.size()%num_threads != 0))
 						{
-							std::cout <<" Gets inside here " <<std::endl;
 							end = students.size();
-							std::cout <<" middle is " << middle << "end is " << end << std::endl;; 
 						}
-						else
-						{
 						Merge(&students, begin, middle, end, &final_result);
 						students = final_result;
 						middle = end;
-						}
 					}
 				}
 				else

@@ -14,6 +14,7 @@ std::vector<student>* mergeSortThread(int begin, int end, std::vector<student>* 
 		b.push_back(*it);
 	}
 	split(&b, begin, end, studs);
+	//std::cout << "end is " << end << std::endl;
 	//std::cout <<"begin was " << begin << "end is " << end << std::endl;
 	return studs;
 }
@@ -44,6 +45,10 @@ void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<
 	assert(D);
 	int i = begin;
 	int j = middle;
+	if(end == 166671)
+	{
+			std::cout << " end is " << end << std::endl;
+	}
 	for(int k = begin; k < end; k++)
 	{
 		if(i < middle && (j>=end || C->at(i).getScore() <= C->at(j).getScore()))
@@ -59,25 +64,4 @@ void Merge(std::vector<student> *C, int begin, int middle, int end, std::vector<
 	}
 }
 
-
-void Merge2(std::vector<student> *C, int begin, int middle, int end, std::vector<student> *D)
-{
-	assert(C);
-	assert(D);
-	int i = begin;
-	int j = middle;
-	for(int k = begin; k < end; k++)
-	{
-		if(i < middle && (j>=end || C->at(i).getScore() <= C->at(j).getScore()))
-		{
-			D->push_back(C->at(i));
-			i++;
-		}
-		else
-		{
-			D->push_back(C->at(j));
-			j++;
-		}
-	}
-}
 
