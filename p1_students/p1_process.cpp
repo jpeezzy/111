@@ -45,10 +45,20 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 				{
 					targs[j].num_threads = num_threads;
 					targs[j].sizeofVector = sizeofVector;
+					targs[j].begin = j*sizeofVector;
+					targs[j].end = (j+1)*sizeofVector;
 					targs[j].sV = &students;
 					targs[j].threadNum = j;
-					pthread_attr_init(&attr[j]);
-					pthread_create(&tid[j],&attr[j], runnable, (void*)&targs[j]);
+					if(j == (num_threads-1))
+					{
+						if(students.size()%num_threads  != 0)
+						{
+							std::cout <<"changes the end to " << std::endl;
+							targs[j].end = students.size();
+						}
+					}
+						pthread_attr_init(&attr[j]);
+						pthread_create(&tid[j],&attr[j], runnable, (void*)&targs[j]);
 				}
 
 				for(int k = 0; k < num_threads; k++)
@@ -69,25 +79,33 @@ void get_statistics(std::string class_name[], int num_processes, int num_threads
 					//std::cout<<"the size of students is " << students.size() << std::endl;
 					for(int i = 0; i < num_threads; i++)
 					{
-						//end = (i+1)*students.size()/num_threads;
 						//middle = (begin+end)/2;
 						end = (i+1)*students.size()/num_threads;
 						//std::cout << "begin is " << begin << "end is " << end << "middle is " << middle << std::endl;
+						if((i == (num_threads-1)) && (students.size()%num_threads != 0))
+						{
+							std::cout <<" Gets inside here " <<std::endl;
+							end = students.size();
+							std::cout <<" middle is " << middle << "end is " << end << std::endl;; 
+						}
+						else
+						{
 						Merge(&students, begin, middle, end, &final_result);
 						students = final_result;
 						middle = end;
+						}
 					}
 				}
 				else
 				{
 					final_result = students;
 				}
-					writeToFile(final_result, class_name[filenumber]);
-					double m = mean(final_result);
-					double stdDev = standardDeiviation(final_result);
-					double med = median(final_result);
-					writeStatistics(final_result, class_name[filenumber], m, med, stdDev);
-					//std::cout<<"finished merging all threads !"<<std::endl;
+				writeToFile(final_result, class_name[filenumber]);
+				double m = mean(final_result);
+				double stdDev = standardDeiviation(final_result);
+				double med = median(final_result);
+				writeStatistics(final_result, class_name[filenumber], m, med, stdDev);
+				//std::cout<<"finished merging all threads !"<<std::endl;
 				//write the "sorted vector" to file
 			}
 			_Exit(EXIT_SUCCESS);

@@ -22,9 +22,7 @@ void *runnable(void *param)
 {
 	assert(param);
 	struct thread_args *threadArgs = (struct thread_args *)param;
-	int begin = threadArgs->threadNum * threadArgs->sizeofVector;
-	int end = (threadArgs->threadNum+1) * threadArgs->sizeofVector;
-	mergeSortThread(begin, end, threadArgs->sV);
+	mergeSortThread(threadArgs->begin, threadArgs->end, threadArgs->sV);
 
 	return NULL;
 }	//creates thread
